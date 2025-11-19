@@ -1,0 +1,930 @@
+/* ============================================
+   GLOBAL RESETS & BASE STYLES
+   ============================================ */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* ============================================
+   THEME VARIABLES
+   ============================================ */
+
+/* WARGAMES THEME (Terminal Green) */
+[data-theme="wargames"] {
+  --bg-primary: #000000;
+  --bg-secondary: #0a0a0a;
+  --bg-tertiary: #1a1a1a;
+  
+  --text-primary: #33aa33;
+  --text-secondary: #66ff66;
+  --text-muted: rgba(51, 170, 51, 0.7);
+  --text-dim: rgba(51, 170, 51, 0.5);
+  
+  --border-primary: rgba(51, 170, 51, 0.33);
+  --border-secondary: rgba(51, 170, 51, 0.2);
+  --border-solid: #33aa33;
+  
+  --shadow-text: 0 0 5px #33aa33;
+  --shadow-glow: 0 0 10px #33aa33;
+  --shadow-button: 0 0 8px #33aa33;
+  
+  --font-primary: "Courier New", Courier, monospace;
+  --font-size-base: 13px;
+  --letter-spacing: 0.5px;
+  --line-height: 1.3;
+  
+  --transition-speed: 0.15s;
+}
+
+/* BOUTIQUE THEME (Modern Sleek) */
+[data-theme="boutique"] {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f9fa;
+  --bg-tertiary: #e9ecef;
+  
+  --text-primary: #1a1a1a;
+  --text-secondary: #495057;
+  --text-muted: #6c757d;
+  --text-dim: #adb5bd;
+  
+  --border-primary: #dee2e6;
+  --border-secondary: #e9ecef;
+  --border-solid: #495057;
+  
+  --shadow-text: none;
+  --shadow-glow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --shadow-button: 0 2px 4px rgba(0, 0, 0, 0.1);
+  
+  --accent-primary: #0d6efd;
+  --accent-success: #198754;
+  --accent-warning: #ffc107;
+  --accent-danger: #dc3545;
+  
+  --font-primary: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  --font-size-base: 15px;
+  --letter-spacing: 0;
+  --line-height: 1.6;
+  
+  --transition-speed: 0.2s;
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.97; }
+}
+
+@keyframes blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+[data-theme="wargames"] .blink {
+  animation: blink 1s infinite;
+}
+
+[data-theme="wargames"] .pulse {
+  animation: pulse 2s infinite;
+}
+
+/* Boutique uses smooth fade-ins instead of flicker */
+[data-theme="boutique"] * {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* ============================================
+   SCANLINE EFFECT (Wargames only)
+   ============================================ */
+
+[data-theme="wargames"] .scanline {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(transparent 50%, rgba(0, 0, 0, 0.25) 50%);
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: 10000;
+}
+
+[data-theme="boutique"] .scanline {
+  display: none;
+}
+
+/* ============================================
+   APP CONTAINER
+   ============================================ */
+
+.app-container {
+  min-height: 100vh;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-primary);
+  font-size: var(--font-size-base);
+  letter-spacing: var(--letter-spacing);
+  line-height: var(--line-height);
+  text-shadow: var(--shadow-text);
+  padding: 0;
+}
+
+[data-theme="wargames"] .app-container {
+  animation: flicker var(--transition-speed) infinite;
+}
+
+/* ============================================
+   CONTROL PANEL
+   ============================================ */
+
+.control-panel {
+  border-bottom: 1px solid var(--border-primary);
+  padding: 20px 40px;
+}
+
+[data-theme="boutique"] .control-panel {
+  background: var(--bg-secondary);
+  box-shadow: var(--shadow-glow);
+}
+
+.ascii-header,
+.ascii-footer {
+  margin: 0;
+  white-space: pre;
+  font-size: 11px;
+}
+
+[data-theme="boutique"] .ascii-header,
+[data-theme="boutique"] .ascii-footer {
+  display: none;
+}
+
+/* ============================================
+   THEME SWITCHER
+   ============================================ */
+
+.theme-switcher {
+  display: flex;
+  gap: 10px;
+  padding: 15px 40px;
+  border-bottom: 1px solid var(--border-secondary);
+}
+
+.theme-button {
+  background: transparent;
+  color: var(--text-primary);
+  border: 2px solid var(--border-solid);
+  padding: 8px 20px;
+  font-family: var(--font-primary);
+  font-size: 12px;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all var(--transition-speed);
+}
+
+.theme-button:hover {
+  background: var(--text-primary);
+  color: var(--bg-primary);
+}
+
+.theme-button.active {
+  background: var(--text-primary);
+  color: var(--bg-primary);
+  font-weight: bold;
+}
+
+[data-theme="boutique"] .theme-button {
+  border-radius: 6px;
+  border-color: var(--border-primary);
+}
+
+[data-theme="boutique"] .theme-button.active {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: white;
+}
+
+/* ============================================
+   THROTTLE CONTROL
+   ============================================ */
+
+.throttle-control {
+  padding: 15px 40px;
+  border-bottom: 1px solid var(--border-secondary);
+}
+
+.throttle-label {
+  font-size: 12px;
+  margin-bottom: 10px;
+  opacity: 0.7;
+}
+
+.throttle-inputs {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.throttle-slider {
+  width: 300px;
+  accent-color: var(--text-primary);
+}
+
+[data-theme="boutique"] .throttle-slider {
+  accent-color: var(--accent-primary);
+}
+
+.throttle-value {
+  font-size: 18px;
+  font-weight: bold;
+  min-width: 100px;
+}
+
+.throttle-status {
+  font-size: 11px;
+  opacity: 0.6;
+}
+
+/* ============================================
+   DATA CONTROLS
+   ============================================ */
+
+.data-controls {
+  display: flex;
+  gap: 40px;
+  padding: 20px 40px;
+  align-items: flex-start;
+}
+
+[data-theme="boutique"] .data-controls {
+  justify-content: space-around;
+}
+
+.data-control-item {
+  flex: 1;
+  text-align: center;
+}
+
+[data-theme="boutique"] .data-control-item {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-glow);
+}
+
+.control-label {
+  font-size: 12px;
+  opacity: 0.7;
+  margin-bottom: 10px;
+  letter-spacing: 2px;
+}
+
+.control-count {
+  font-size: 48px;
+  font-weight: bold;
+  text-shadow: var(--shadow-glow);
+  margin-bottom: 15px;
+}
+
+[data-theme="boutique"] .control-count {
+  color: var(--accent-primary);
+}
+
+.fetch-button {
+  background: transparent;
+  color: var(--text-primary);
+  border: 2px solid var(--border-solid);
+  padding: 10px 30px;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: var(--font-primary);
+  letter-spacing: 2px;
+  font-weight: bold;
+  text-shadow: var(--shadow-button);
+  transition: all var(--transition-speed);
+}
+
+.fetch-button.loaded {
+  background: transparent;
+  color: var(--text-primary);
+}
+
+.fetch-button.empty {
+  background: var(--text-primary);
+  color: var(--bg-primary);
+}
+
+.fetch-button.loading {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.fetch-button:hover:not(.loading) {
+  transform: scale(1.05);
+}
+
+[data-theme="boutique"] .fetch-button {
+  border-radius: 8px;
+  box-shadow: var(--shadow-button);
+}
+
+[data-theme="boutique"] .fetch-button.empty {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: white;
+}
+
+[data-theme="boutique"] .fetch-button.loaded {
+  background: var(--accent-success);
+  border-color: var(--accent-success);
+  color: white;
+}
+
+.control-status {
+  font-size: 10px;
+  margin-top: 8px;
+  opacity: 0.5;
+}
+
+/* ============================================
+   MAIN CONTENT
+   ============================================ */
+
+.main-content {
+  padding: 40px;
+}
+
+[data-theme="boutique"] .main-content {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* ============================================
+   APP FOOTER
+   ============================================ */
+
+.app-footer {
+  position: fixed;
+  bottom: 10px;
+  left: 40px;
+  margin: 0;
+  opacity: 0.4;
+  font-size: 10px;
+}
+
+[data-theme="boutique"] .app-footer {
+  display: none;
+}
+
+/* ============================================
+   EXAMPLE BROWSER
+   ============================================ */
+
+.example-browser {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.page-header {
+  margin: 0 0 20px 0;
+  font-size: 11px;
+}
+
+[data-theme="boutique"] .page-header {
+  display: none;
+}
+
+[data-theme="boutique"] .example-browser::before {
+  content: "Example Browser";
+  display: block;
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 30px;
+  color: var(--text-primary);
+}
+
+/* ============================================
+   FILTER PANEL
+   ============================================ */
+
+.filter-panel {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+[data-theme="boutique"] .filter-panel {
+  background: white;
+  border-radius: 12px;
+  box-shadow: var(--shadow-glow);
+  border: none;
+}
+
+.filter-title {
+  font-size: 12px;
+  margin-bottom: 15px;
+  letter-spacing: 2px;
+}
+
+[data-theme="boutique"] .filter-title {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.filter-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.filter-group {
+  /* Container for label + select */
+}
+
+.filter-label {
+  display: block;
+  font-size: 11px;
+  margin-bottom: 8px;
+  opacity: 0.7;
+}
+
+[data-theme="boutique"] .filter-label {
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 1;
+}
+
+.filter-select {
+  width: 100%;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-solid);
+  padding: 10px;
+  font-size: 13px;
+  font-family: var(--font-primary);
+  cursor: pointer;
+}
+
+[data-theme="boutique"] .filter-select {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: 6px;
+  padding: 12px;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+[data-theme="boutique"] .filter-select:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+}
+
+.results-count {
+  margin-top: 15px;
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+[data-theme="boutique"] .results-count {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* ============================================
+   EXAMPLES GRID
+   ============================================ */
+
+.examples-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+  gap: 20px;
+}
+
+[data-theme="boutique"] .examples-grid {
+  gap: 24px;
+}
+
+/* ============================================
+   EXAMPLE CARD
+   ============================================ */
+
+.example-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  padding: 15px;
+}
+
+[data-theme="boutique"] .example-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: var(--shadow-glow);
+  border: 1px solid var(--border-secondary);
+  padding: 20px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+[data-theme="boutique"] .example-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-secondary);
+}
+
+.card-title {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+[data-theme="boutique"] .card-title {
+  font-size: 16px;
+  color: var(--text-primary);
+}
+
+.card-subtitle {
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+[data-theme="boutique"] .card-subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.practice-icon {
+  font-size: 24px;
+}
+
+/* ============================================
+   BADGES
+   ============================================ */
+
+.card-badges {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  font-size: 11px;
+}
+
+.badge {
+  padding: 4px 8px;
+  border: 1px solid var(--border-solid);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+[data-theme="boutique"] .badge {
+  border-radius: 4px;
+  font-weight: 600;
+  border: none;
+}
+
+.badge-best {
+  /* Inherits base badge styles */
+}
+
+[data-theme="boutique"] .badge-best {
+  background: #d4edda;
+  color: #155724;
+}
+
+.badge-beginner {
+  /* Inherits base badge styles */
+}
+
+[data-theme="boutique"] .badge-beginner {
+  background: #d1ecf1;
+  color: #0c5460;
+}
+
+.badge-archaic {
+  /* Inherits base badge styles */
+}
+
+[data-theme="boutique"] .badge-archaic {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.badge-worst {
+  /* Inherits base badge styles */
+}
+
+[data-theme="boutique"] .badge-worst {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.badge-style {
+  background: rgba(51, 170, 51, 0.13);
+  opacity: 0.7;
+}
+
+[data-theme="boutique"] .badge-style {
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  opacity: 1;
+}
+
+/* ============================================
+   CODE BLOCK
+   ============================================ */
+
+.code-block {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-secondary);
+  padding: 10px;
+  font-size: 12px;
+  overflow: auto;
+  max-height: 200px;
+  margin: 10px 0;
+  line-height: 1.4;
+}
+
+[data-theme="boutique"] .code-block {
+  background: #f8f9fa;
+  border: 1px solid var(--border-primary);
+  border-radius: 6px;
+  padding: 16px;
+  font-size: 13px;
+  font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+}
+
+.card-notes {
+  font-size: 11px;
+  opacity: 0.6;
+  font-style: italic;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-secondary);
+}
+
+[data-theme="boutique"] .card-notes {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-style: normal;
+}
+
+/* ============================================
+   NO RESULTS
+   ============================================ */
+
+.no-results {
+  text-align: center;
+  padding: 60px 20px;
+  font-size: 14px;
+  opacity: 0.5;
+}
+
+.no-results-icon {
+  font-size: 48px;
+  margin-bottom: 20px;
+}
+
+.no-results-text {
+  /* Base styles */
+}
+
+.no-results-hint {
+  font-size: 11px;
+  margin-top: 10px;
+}
+
+[data-theme="boutique"] .no-results {
+  background: white;
+  border-radius: 12px;
+  box-shadow: var(--shadow-glow);
+  opacity: 1;
+  color: var(--text-muted);
+}
+
+/* ============================================
+   LOADING GATE
+   ============================================ */
+
+.loading-gate {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-primary);
+  font-size: 11px;
+  padding: 15px 30px;
+  overflow: hidden;
+  letter-spacing: var(--letter-spacing);
+  line-height: 1.2;
+  text-shadow: var(--shadow-text);
+}
+
+[data-theme="wargames"] .loading-gate {
+  animation: flicker 0.15s infinite;
+}
+
+[data-theme="boutique"] .loading-gate {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gate-header {
+  margin: 0;
+  white-space: pre;
+  font-size: 11px;
+}
+
+[data-theme="boutique"] .gate-header {
+  display: none;
+}
+
+.stage-display {
+  margin: 15px 0;
+  padding: 15px 40px;
+  text-align: center;
+}
+
+.stage-name {
+  font-size: 32px;
+  font-weight: bold;
+  letter-spacing: 4px;
+  text-shadow: var(--shadow-glow);
+}
+
+[data-theme="boutique"] .stage-name {
+  font-size: 48px;
+  letter-spacing: 2px;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+}
+
+.stage-subtitle {
+  font-size: 12px;
+  margin-top: 5px;
+  opacity: 0.7;
+}
+
+[data-theme="boutique"] .stage-subtitle {
+  font-size: 16px;
+  opacity: 0.9;
+}
+
+.metrics-container {
+  display: flex;
+  gap: 20px;
+  margin: 15px 40px;
+}
+
+[data-theme="boutique"] .metrics-container {
+  display: none;
+}
+
+.metrics-panel {
+  flex: 1;
+}
+
+.metrics-content {
+  margin: 0;
+  white-space: pre;
+  font-size: 11px;
+}
+
+.data-buffer {
+  margin: 15px 40px;
+}
+
+[data-theme="boutique"] .data-buffer {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.buffer-header,
+.buffer-footer {
+  margin: 5px 40px 0 40px;
+  white-space: pre;
+  font-size: 11px;
+}
+
+[data-theme="boutique"] .buffer-header,
+[data-theme="boutique"] .buffer-footer {
+  display: none;
+}
+
+.buffer-content {
+  margin: 5px 40px 0 60px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 180px;
+  overflow: auto;
+  padding: 10px;
+  font-size: 11px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-secondary);
+}
+
+[data-theme="boutique"] .buffer-content {
+  background: rgba(0, 0, 0, 0.2);
+  border: none;
+  border-radius: 8px;
+  margin: 0;
+  padding: 20px;
+  max-height: 300px;
+  font-size: 14px;
+}
+
+.gate-controls {
+  position: absolute;
+  bottom: 20px;
+  left: 40px;
+  right: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+[data-theme="boutique"] .gate-controls {
+  position: static;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.confirm-button {
+  background: transparent;
+  border: 2px solid var(--border-solid);
+  color: var(--text-primary);
+  font-family: var(--font-primary);
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 15px 40px;
+  text-shadow: var(--shadow-button);
+  letter-spacing: 3px;
+}
+
+[data-theme="boutique"] .confirm-button {
+  background: white;
+  border: none;
+  color: #667eea;
+  border-radius: 50px;
+  padding: 18px 50px;
+  font-size: 18px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s;
+}
+
+[data-theme="boutique"] .confirm-button:hover {
+  transform: scale(1.05);
+}
+
+.gate-footer {
+  margin: 0;
+  opacity: 0.4;
+  font-size: 10px;
+}
+
+[data-theme="boutique"] .gate-footer {
+  display: none;
+}
