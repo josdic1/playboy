@@ -1,4 +1,4 @@
-from config import db
+from extensions import db
 from datetime import datetime
 
 class User(db.Model):
@@ -22,9 +22,9 @@ class Language(db.Model):
     __tablename__ = 'languages'
     
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), nullable=False)  # "JavaScript", "Python", etc.
+    name = db.Column(db.String(50), nullable=False)
     icon_url = db.Column(db.String(255))
-    color_code = db.Column(db.String(7))  # "#F7DF1E"
+    color_code = db.Column(db.String(7))  # Hex color like "#F7DF1E"
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
@@ -40,7 +40,7 @@ class Command(db.Model):
     __tablename__ = 'commands'
     
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)  # "filter array", "join tables"
+    name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -60,8 +60,8 @@ class Example(db.Model):
     command_id = db.Column(db.Integer, db.ForeignKey('commands.id'), nullable=False)
     language_id = db.Column(db.Integer, db.ForeignKey('languages.id'), nullable=False)
     code_block = db.Column(db.Text, nullable=False)
-    style_name = db.Column(db.String(100))  # "Functional", "Imperative", etc.
-    practice_type = db.Column(db.Enum('best', 'worst', 'beginner', 'archaic'), nullable=False)
+    style_name = db.Column(db.String(100))
+    practice_type = db.Column(db.String(20), nullable=False)  # 'best', 'worst', 'beginner', 'archaic'
     notes = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -73,8 +73,6 @@ class Example(db.Model):
     # Relationships
     command = db.relationship('Command', back_populates='examples')
     language = db.relationship('Language', back_populates='examples')
-    
-    # Self-referential relationship for dethroning
     dethroned_by = db.relationship('Example', remote_side=[id], foreign_keys=[dethroned_by_id])
     
     def __repr__(self):
